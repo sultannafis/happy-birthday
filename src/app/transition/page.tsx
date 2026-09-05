@@ -1,39 +1,66 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 import Cloud from "@/components/ui/Cloud";
 import Balloon from "@/components/ui/Balloon";
 import Flower from "@/components/ui/Flower";
 import BirthdayCake from "@/components/ui/BirthdayCake";
+import CalendarReveal from "@/components/ui/CalendarReveal";
 
 export default function TransitionPage() {
   const router = useRouter();
+  const [stage, setStage] = useState<'calendar' | 'cake'>('calendar');
   const [showNextButton, setShowNextButton] = useState(false);
 
   useEffect(() => {
-    // Show the "Lanjut" button after the cinematic scene has played for a bit (e.g. 8 seconds)
-    const timer = setTimeout(() => {
-      setShowNextButton(true);
-    }, 8000);
+    // Stage 1 -> Stage 2 (Ganti dari Kalender ke Kue pada detik ke-5)
+    const stageTimer = setTimeout(() => {
+      setStage('cake');
+    }, 5500);
 
-    // Fire lightweight confetti after cake and text have entered
+    // Confetti saat kue ulang tahun muncul (sekitar detik ke 7.5)
     const confettiTimer = setTimeout(() => {
       confetti({
-        particleCount: 70,
-        spread: 90,
+        particleCount: 100,
+        spread: 120,
         origin: { y: 0.6 },
-        colors: ["#ffffff", "#FF9AA2", "#FFB7B2", "#FFDAC1", "#E2F0CB"],
+        colors: ["#ffffff", "#FF9AA2", "#FFB7B2", "#FFDAC1", "#E2F0CB", "#f472b6"],
         disableForReducedMotion: true,
-        zIndex: 20
+        zIndex: 50,
       });
-    }, 2800);
+      // Ledakan kedua sedikit delay biar meriah
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          spread: 100,
+          origin: { y: 0.6, x: 0.3 },
+          colors: ["#ffffff", "#FF9AA2", "#FFDAC1"],
+          disableForReducedMotion: true,
+          zIndex: 50,
+        });
+        confetti({
+          particleCount: 80,
+          spread: 100,
+          origin: { y: 0.6, x: 0.7 },
+          colors: ["#ffffff", "#f472b6", "#E2F0CB"],
+          disableForReducedMotion: true,
+          zIndex: 50,
+        });
+      }, 300);
+    }, 7500);
+
+    // Show the "Lanjut" button
+    const nextBtnTimer = setTimeout(() => {
+      setShowNextButton(true);
+    }, 11000);
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(stageTimer);
       clearTimeout(confettiTimer);
+      clearTimeout(nextBtnTimer);
     };
   }, []);
 
@@ -43,8 +70,6 @@ export default function TransitionPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-t from-sky-200 via-sky-400 to-[#87ceeb]">
-      {/* Background Music dipindah ke global layout.tsx */}
-
       {/* Clouds - Parallax Effect */}
       <Cloud className="top-[5%]" delay={0} duration={40} width={250} opacity={0.6} />
       <Cloud className="top-[20%]" delay={15} duration={50} width={300} opacity={0.4} />
@@ -71,18 +96,37 @@ export default function TransitionPage() {
       <Flower left="55%" delay={12} duration={11} size={25} />
       <Flower left="90%" delay={15} duration={17} size={30} />
 
-      {/* Central Message & Cake */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none gap-6">
-        <BirthdayCake />
-        <motion.h1 
-          className="font-script text-white text-5xl md:text-7xl text-center drop-shadow-md leading-tight"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 3, ease: "easeOut", delay: 1 }}
-        >
-          happyy birthdayyy<br/>sayanggggkuu
-        </motion.h1>
-      </div>
+      {/* Main Content Area (Calendar & Cake) */}
+      <AnimatePresence mode="wait">
+        {stage === 'calendar' ? (
+          <motion.div 
+            key="calendar" 
+            exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }} 
+            transition={{ duration: 0.8 }} 
+            className="absolute inset-0 flex flex-col items-center justify-center z-30"
+          >
+            <CalendarReveal />
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="cake" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ duration: 1 }} 
+            className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none gap-6"
+          >
+            <BirthdayCake />
+            <motion.h1 
+              className="font-script text-white text-5xl md:text-7xl text-center drop-shadow-md leading-tight"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 2.5, ease: "easeOut", delay: 1 }}
+            >
+              happyy birthdayyy<br/>sayanggggkuu
+            </motion.h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Next Button */}
       <motion.div 

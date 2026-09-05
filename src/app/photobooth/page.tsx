@@ -65,8 +65,8 @@ export default async function PhotoboothPage() {
        
        <div className="max-w-7xl mx-auto relative">
          <div className="text-center mb-4 relative z-20">
-            <h1 className="text-6xl md:text-7xl font-script text-gradient mb-6 font-bold drop-shadow-sm leading-snug p-2">
-              photoo boothh kitaaaa hihihi
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-script text-gradient mb-6 font-bold drop-shadow-sm leading-snug p-2 max-w-full break-words">
+              photooboothh kitaaaa hihihi
             </h1>
             <p className="text-slate-700 max-w-xl mx-auto md:text-lg font-medium bg-white/40 p-4 rounded-2xl backdrop-blur-sm border border-white/50 shadow-sm leading-relaxed">
               mukaa konyolll, senyummm manissss, dan tawaaa lepas kitaaa diabadikan dalam lembaran film abadiii ini hihihi 📸✨
